@@ -145,6 +145,7 @@ const setHTML = (difficulty) => {
 
     answerContainer.innerHTML = initialHTML;
     userContainer.innerHTML = initialHTML;
+    userContainer.style = "";
 
     Object.assign(answerContainer.style, generateParentStyle(flexboxProperties.parent));
 
