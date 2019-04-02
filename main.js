@@ -4,6 +4,9 @@ const answerContainer = document.querySelector('.answer-container');
 const userContainer = document.querySelector('.user-container');
 const tryItBtn = document.querySelector('#try-it');
 const userInput = document.querySelector('textarea');
+const getRandNum = (min, max) => Math.floor(Math.random() * (max - min) + min);
+const getRandElement = arr => arr[getRandNum(0, arr.length)];
+const arrNumOfItems = [3, 5, 20];
 
 const flexboxProperties = {
     parent: [
@@ -35,16 +38,8 @@ const flexboxProperties = {
             values: ["flex-start", "flex-end", "center", "baseline", "stretch"]
         },
         {
-            name: "flex-basis",
-            values: ["1em", "2em", "3em", "4em", "5em"]
-        },
-        {
             name: "order",
             values: "pos/neg"
-        },
-        {
-            name: "flex-shrink",
-            values: [0, 1, 2]
         },
         {
             name: "flex-grow",
@@ -53,9 +48,7 @@ const flexboxProperties = {
     ]
 }
 
-const getRandNum = (min, max) => Math.floor(Math.random() * (max - min) + min);
-const getRandElement = arr => arr[getRandNum(0, arr.length)];
-const numberOfItems = [3, 5, 20];
+
 
 const generateParentStyle = (arr) => {
     return arr.reduce((prev, curr) => {
@@ -66,21 +59,28 @@ const generateParentStyle = (arr) => {
 
 const generateItemStyle = (arr) => {
     return arr.reduce((prev, curr) => {
-        prev[curr.name] = getRandElement(curr.values);
+        let result = "";
+        switch (curr.name) {
+            case "order":
+                result = getRandNum(0, curr.values.length);
+                break;
+            default:
+                result = getRandElement(curr.values);
+        }
+        prev[curr.name] = result;
         return prev;
     }, {});
 };
 
-const createItemsHtml = () => {
+const createHTML = (difficulty) => {
     let output = '';
+    let numberOfItems = (difficulty === 'basic') ? [3] : arrNumOfItems;
     let length = getRandElement(numberOfItems);
     for (var i = 0; i < length; i += 1) {
         output += `<div class="item">Item ${String(i + 1).padStart(2, 0)}</div>`;
     }
     return output;
 };
-
-const initialHtml = createItemsHtml();
 
 const verifyMatch = () => {
     return Promise.all([
@@ -93,18 +93,78 @@ const verifyMatch = () => {
     });
 }
 
-answerContainer.style.display = "flex";
-userContainer.style.display = "flex";
-answerContainer.innerHTML = initialHtml;
-userContainer.innerHTML = initialHtml;
 
-tryItBtn.addEventListener("click", function(e) {
-    userContainer.style = userInput.value + "display: flex;";
-    verifyMatch().then(function(isMatch) {
-        if (isMatch) {
-            alert("Excellent work! :) Now try a new exercise.");
+const addTryItButtonListener = () => {
+    tryItBtn.addEventListener("click", function(e) {
+        userContainer.style = userInput.value + "display: flex;";
+        const textareas = [].slice.call(document.querySelectorAll("textarea"));
+        textareas.shift();
+        
+        textareas.forEach(function(textarea, index) {
+            document.querySelectorAll(".user-container div.item")[index].style = textarea.value + "display: flex";
+        });
+    
+        verifyMatch().then(function(isMatch) {
+            if (isMatch) {
+                alert("Excellent work! :) Now try a new exercise.");
+            }
+        });
+    });
+}
+
+const addItemStyle = (difficulty) => {
+    const answerItems = document.querySelectorAll(".answer-container .item");
+    if (difficulty === 'challenge' && answerItems.length < 10) {
+        for (let answerItem of answerItems) {
+            Object.assign(answerItem.style, generateItemStyle(flexboxProperties.item));
         }
+    }
+};
+
+const addItemTextAreas = (difficulty) => {
+    let output = "";
+    const answerItems = document.querySelectorAll(".answer-container .item");
+    console.log(answerItems);
+    if (difficulty === 'challenge' && answerItems.length < 10) {
+        answerItems.forEach(function(element, index) {
+            output += `
+            <label for="item-${index + 1}-input">Enter attributes for item #${index + 1}</label>
+            <textarea id='item-${index + 1}-input'>property-here: value-here;</textarea>
+            `;
+            index++;
+        });
+    }
+    return output;
+}
+
+
+const setHTML = (difficulty) => {
+    
+    const initialHTML = createHTML(difficulty);
+    answerContainer.style.display = "flex";
+    userContainer.style.display = "flex";
+
+    answerContainer.innerHTML = initialHTML;
+    userContainer.innerHTML = initialHTML;
+
+    Object.assign(answerContainer.style, generateParentStyle(flexboxProperties.parent));
+
+    return Promise.resolve();
+};
+
+setHTML('basic');
+
+addTryItButtonListener();
+
+document.querySelectorAll('.difficulty-btn').forEach(function(element) {
+    element.addEventListener("click", function(e) {
+        document.getElementById('user-input').value = "property-here: value-here;";
+        setHTML(e.target.dataset.diff).then(function() {
+            addItemStyle(e.target.dataset.diff);
+        }).then(function() {
+            const itemTextAreas = document.querySelector("#item-textareas");
+            itemTextAreas.innerHTML = addItemTextAreas(e.target.dataset.diff);
+        });
     });
 });
 
-Object.assign(answerContainer.style, generateParentStyle(flexboxProperties.parent));

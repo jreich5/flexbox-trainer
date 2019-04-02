@@ -61,7 +61,16 @@ textarea {
     width: 100%;
     font-size: 2em;
 }
-.bottom {
+
+.try-it-btn:hover {
+    background: rgb(187, 88, 77);
+}
+
+.try-it-btn:active {
+    background: rgb(152, 73, 64);
+}
+
+.bottom {   
     grid-column-start: 2;
     grid-column-end: 6;
     background: var(--ref-bg);

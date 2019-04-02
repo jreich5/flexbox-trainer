@@ -10,28 +10,23 @@
 <body>
     <header class="container">
         <h1>Welcome to Flexbox Trainer!</h1>
-        <button onclick="location.reload()">New Problem</button>
+        <button class="difficulty-btn" data-diff="basic">New Basic Problem</button>
+        <button class="difficulty-btn" data-diff="challenge">New Challenge Problem</button>
         <p>Click on a level to generate a new problem.</p>
         <p>Inspect the page to see a possible solution</p>
         <p>Match the items on the left with the items on the right using the flexbox properties below.</p> 
     </header>
     <main class="container">
-        <!-- <button>New Simple</button>
-        <button>New Moderate</button>
-        <button>New Complex</button> -->
         <section class="side-sections answer">
-            <div class="answer-container">
-                
-            </div>
+            <div class="answer-container"></div>
         </section>
         <section class="side-sections user-output">
-            <div class="user-container">
-                
-            </div>
+            <div class="user-container"></div>
         </section>
         <section class="user-input">
             <label for="user-intput">Enter the attributes for the flex container:</label>
-            <textarea name="solution" id="user-input" cols="30" rows="10">property-here: value-here;</textarea>
+            <textarea name="solution" id="user-input">property-here: value-here;</textarea>
+            <div id="item-textareas"></div>
             <button id="try-it" class="try-it-btn">Try it!</button>
         </section>
         <section class="bottom">
