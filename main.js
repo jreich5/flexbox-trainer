@@ -124,7 +124,6 @@ const addItemStyle = (difficulty) => {
 const addItemTextAreas = (difficulty) => {
     let output = "";
     const answerItems = document.querySelectorAll(".answer-container .item");
-    console.log(answerItems);
     if (difficulty === 'challenge' && answerItems.length < 10) {
         answerItems.forEach(function(element, index) {
             output += `

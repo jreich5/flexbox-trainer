@@ -115,3 +115,8 @@ textarea {
 .flex-items-reference > div {
     margin: 0 1em;
 }
+
+.warning {
+    color: yellow;
+    font-weight: bold;
+}
